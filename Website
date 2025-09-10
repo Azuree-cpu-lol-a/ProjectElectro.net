@@ -1,0 +1,102 @@
+<script>
+  const output = document.getElementById("output");
+  let lastLogTime = 0;
+  let outputDelay = 0;
+
+  function logOutput(message) {
+    const now = Date.now();
+    if (now - lastLogTime < outputDelay * 1000) return;
+    lastLogTime = now;
+    const p = document.createElement("p");
+    p.textContent = message;
+    output.appendChild(p);
+    output.scrollTop = output.scrollHeight;
+  }
+
+  document.getElementById("actionBtn").addEventListener("click", () => {
+    logOutput("Button clicked!");
+  });
+
+  const slider = document.getElementById("slider");
+  const sliderValue = document.getElementById("sliderValue");
+  function updateSlider() {
+    sliderValue.textContent = `Value: ${slider.value}`;
+    logOutput(`Slider set to ${slider.value}`);
+  }
+  slider.addEventListener("input", updateSlider);
+  updateSlider();
+
+  document.getElementById("toggleSwitch").addEventListener("change", (e) => {
+    logOutput(`Toggle state: ${e.target.checked}`);
+  });
+
+  document.getElementById("dropdown").addEventListener("change", (e) => {
+    logOutput(`Dropdown selected: ${e.target.value}`);
+  });
+
+  const colorInput = document.getElementById("color");
+  const colorInfo = document.getElementById("colorInfo");
+  colorInput.addEventListener("input", (e) => {
+    const hex = e.target.value;
+    let colorType = "Hex";
+    colorInfo.innerHTML = `Color Code: ${hex} (${colorType}) <span id="colorPreview" style="background:${hex}"></span>`;
+    logOutput(`Color selected: ${hex}`);
+  });
+
+  const searchBtn = document.getElementById("searchBtn");
+  const searchBox = document.getElementById("searchBox");
+  const searchInput = document.getElementById("searchInput");
+
+  searchBtn.addEventListener("click", () => {
+    searchBox.style.display = searchBox.style.display === "block" ? "none" : "block";
+    searchInput.focus();
+  });
+
+  searchInput.addEventListener("input", (e) => {
+    const filter = e.target.value.toLowerCase();
+    const sections = document.querySelectorAll(".searchable");
+    sections.forEach(sec => {
+      const text = sec.getAttribute("data-label").toLowerCase();
+      if (text.includes(filter)) {
+        sec.style.display = "";
+      } else {
+        sec.style.display = "none";
+      }
+    });
+  });
+
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsMenu = document.getElementById("settingsMenu");
+
+  settingsBtn.addEventListener("click", () => {
+    settingsMenu.style.display = settingsMenu.style.display === "block" ? "none" : "block";
+  });
+
+  // Updated: Only changes menu backgrounds, not body background
+  document.getElementById("bgColor").addEventListener("input", (e) => {
+    document.querySelectorAll('.container, .output-container, .settings-container').forEach(el => {
+      el.style.background = e.target.value;
+    });
+  });
+
+  // Glow color stays the same
+  document.getElementById("glowColor").addEventListener("input", (e) => {
+    document.querySelectorAll('.container, .output-container, .settings-container').forEach(el => {
+      el.style.boxShadow = `0 0 20px ${e.target.value}`;
+    });
+  });
+
+  // Updated: Changes ALL text in menus, not body
+  document.getElementById("textColor").addEventListener("input", (e) => {
+    document.querySelectorAll('.container, .output-container, .settings-container').forEach(el => {
+      el.style.color = e.target.value;
+      el.querySelectorAll('*').forEach(child => {
+        child.style.color = e.target.value;
+      });
+    });
+  });
+
+  document.getElementById("outputDelay").addEventListener("input", (e) => {
+    outputDelay = parseFloat(e.target.value) || 0;
+  });
+</script>
